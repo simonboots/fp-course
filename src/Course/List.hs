@@ -75,8 +75,8 @@ headOr ::
   a
   -> List a
   -> a
-headOr =
-  error "todo: Course.List#headOr"
+headOr d Nil = d
+headOr _ (h:._) = h
 
 -- | The product of the elements of a list.
 --
@@ -91,9 +91,9 @@ headOr =
 product ::
   List Int
   -> Int
-product =
-  error "todo: Course.List#product"
-
+-- product Nil = 1
+-- product (h:.t) = h * product t
+product = foldRight (*) 1
 -- | Sum the elements of the list.
 --
 -- >>> sum (1 :. 2 :. 3 :. Nil)
@@ -106,8 +106,10 @@ product =
 sum ::
   List Int
   -> Int
-sum =
-  error "todo: Course.List#sum"
+-- sum Nil = 0
+-- sum (h:.t) = h + sum t
+-- sum = foldLeft (\a v -> a+v) 0
+sum = foldRight (+) 0
 
 -- | Return the length of the list.
 --
@@ -118,8 +120,8 @@ sum =
 length ::
   List a
   -> Int
-length =
-  error "todo: Course.List#length"
+-- length = foldLeft (\a _ -> a+1) 0
+length = foldLeft (const . (+1)) 0
 
 -- | Map the given function on each element of the list.
 --
@@ -133,9 +135,9 @@ map ::
   (a -> b)
   -> List a
   -> List b
-map =
-  error "todo: Course.List#map"
-
+-- map _ Nil = Nil
+-- map f (h:.t) = f h :. map f t
+map f = foldRight ((:.) . f) Nil
 -- | Return elements satisfying the given predicate.
 --
 -- >>> filter even (1 :. 2 :. 3 :. 4 :. 5 :. Nil)
@@ -150,8 +152,9 @@ filter ::
   (a -> Bool)
   -> List a
   -> List a
-filter =
-  error "todo: Course.List#filter"
+-- filter _ Nil = Nil
+-- filter f (h:.t) = if f h then h :. filter f t else filter f t
+filter f = foldRight (\v l -> if f v then v:.l else l) Nil
 
 -- | Append two lists to a new list.
 --
@@ -169,8 +172,7 @@ filter =
   List a
   -> List a
   -> List a
-(++) =
-  error "todo: Course.List#(++)"
+(++) = flip $ foldRight (:.)
 
 infixr 5 ++
 
@@ -187,8 +189,7 @@ infixr 5 ++
 flatten ::
   List (List a)
   -> List a
-flatten =
-  error "todo: Course.List#flatten"
+flatten = foldRight (++) Nil
 
 -- | Map a function then flatten to a list.
 --
@@ -204,8 +205,7 @@ flatMap ::
   (a -> List b)
   -> List a
   -> List b
-flatMap =
-  error "todo: Course.List#flatMap"
+flatMap = (flatten .) . map
 
 -- | Flatten a list of lists to a list (again).
 -- HOWEVER, this time use the /flatMap/ function that you just wrote.
