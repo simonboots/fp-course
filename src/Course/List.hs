@@ -264,8 +264,8 @@ find ::
   (a -> Bool)
   -> List a
   -> Optional a
-find =
-  error "todo: Course.List#find"
+find _ Nil = Empty
+find f (x:.xs) = if f x then (Full x) else find f xs
 
 -- | Determine if the length of the given list is greater than 4.
 --
